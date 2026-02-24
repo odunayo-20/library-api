@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class StoreMemberRequest extends FormRequest
+class StoreBorrowingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,17 +21,13 @@ class StoreMemberRequest extends FormRequest
      */
     public function rules(): array
     {
-        $member = $this->route('member');
         return [
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('members', 'email')->ignore($member),
-            ],
-            'address' => 'nullable|string',
-            'membership_date' => 'date',
-            'status' => 'required'
+            'book_id' => 'required|exists:books,id',
+        'member_id' => 'required|exists:members,id',
+        'borrowed_date' => 'nullable|date',
+        'due_date' => 'nullable|date|after:borrowed_date',
+        'status' => 'nullable|in:borrowed,returned,overdue',
+
         ];
     }
 }
